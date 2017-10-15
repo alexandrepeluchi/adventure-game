@@ -118,7 +118,8 @@ int      socketfd;
                 close(socketfd);
                 exit(0);
             } else {
-              printf("Dados do tuto %s", buffer);
+                // Exibe as infos do tutorial ou inicia o game e muda tela
+                printf("%s", buffer);
             }
         }
     } while (strcmp(buffer, FIM) != 0);
