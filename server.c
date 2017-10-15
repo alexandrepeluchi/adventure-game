@@ -44,6 +44,7 @@ typedef enum {
   Cama,
   Broche,
   Corredor,
+  Porta,
   PrivadaObj,
   Espelho,
   PiaObj
@@ -223,6 +224,18 @@ int socketfd;
                         aux = Examinar(Corredor);
                         strcpy(buffer, aux);
                         n = write(newsocketfd, buffer, strlen(buffer));
+                    }else if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'p')) && (tolower(buffer[10] == 'o'))) { // Ex. Porta
+                        bzero(buffer, MAXBUFF);
+                        aux = Examinar(Porta);
+                        strcpy(buffer, aux);
+
+                        if (chave == 1) {
+                          printf("Sair, finalizando transmissao\n");
+                          tela++;
+                          gameOver = 1;
+                        }
+
+                        n = write(newsocketfd, buffer, strlen(buffer));
                     }else if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'p')) && (tolower(buffer[10] == 'r'))) { // Ex. Privada
                         bzero(buffer, MAXBUFF);
                         aux = Examinar(PrivadaObj);
@@ -372,37 +385,29 @@ char * Olhar() {
         printf("Enviado o Local Atual - Cama, descricao do que vê e onde pode ir.\n");
         strncpy(aux, "\n\t Você está sentado na cama da beliche, \n \
         olhando para uma parede cheia de coisas, \n \
-        a sua esquerda está a grade da cela, a sua \n \
+        a sua esquerda está a porta e grade da cela, a sua \n \
         direita há uma pia e uma privada, seu \n \
         companheiro de cela, está, na cama de cima da  \n \
         beliche dormindo.\n \n", MAXBUFF);
         return aux;
-    }
-
-    if (localAtual == CamaBaixo) {
+    }else if (localAtual == CamaBaixo) {
         printf("Enviado o Local Atual - Embaixo da Cama, descricao do que vê e onde pode ir.\n");
         strncpy(aux, "\n\t Você está embaixo da beliche, é \n \
         muito apertado você mal consegue se mover, \n \
         a baixo está o 'banheiro' e acima as grades,\n \
         você vê algo estranho no canto, um broche. \n \n", MAXBUFF);
         return aux;
-    }
-
-    if (localAtual == Grade) {
+    }else if (localAtual == Grade) {
         printf("Enviado o Local Atual - Grade, descricao do que vê e onde pode ir.\n");
         strncpy(aux, "\n\t Você está debruçado nas grades, \n \
         dá para ver o corredor, todos estão nas celas. \n \n", MAXBUFF);
         return aux;
-    }
-
-    if (localAtual == Privada) {
+    }else if (localAtual == Privada) {
         printf("Enviado o Local Atual - Privada, descricao do que vê e onde pode ir.\n");
         strncpy(aux, "\n\t Você está em frente a privada, \n \
         a um odor horrível saindo pela privada.\n \n", MAXBUFF);
         return aux;
-    }
-
-    if (localAtual == Pia) {
+    }else if (localAtual == Pia) {
         printf("Enviado o Local Atual - Pia, descricao do que vê e onde pode ir.\n");
         strncpy(aux, "\n\t Você está de frente para a pia, \n \
         há um espelho a sua frente e algo saindo pelo cano.\n \n", MAXBUFF);
@@ -414,6 +419,7 @@ Parede
 Cama
 Broche
 Corredor
+Porta
 Privada
 Espelho
 Pia
@@ -425,37 +431,38 @@ char * Examinar(Objetos obj) {
     if (localAtual == Cama1 && obj == Parede) {
       strncpy(aux, "\t Fotos de família e de famosos.\n\n", MAXBUFF);
       return aux;
-    }
-    if (localAtual == Cama1 && obj == Cama) {
+    }else if (localAtual == Cama1 && obj == Cama) {
       strncpy(aux, "\t A cama é tão dura quanto concreto.\n\n", MAXBUFF);
       return aux;
-    }
-
-    // Embaixo da Cama
-    if (localAtual == CamaBaixo && obj == Broche) {
-      strncpy(aux, "\t Examinar Parede funcionou\n\n", MAXBUFF);
+    }else if (localAtual == CamaBaixo && obj == Broche) {
+      strncpy(aux, "\t Após puxar o Broche, você vê que está amarrado\n \
+      \t uma linha, na sua ponta esta o maço de chaves, \n \
+      \t o Broche tem a foto do President Polvo, escrito, \n \
+      \t 'não se preocupe companheiro'. Agora você pegou as chaves.\n\n", MAXBUFF);
+      chave = 1;
       return aux;
-    }
-
-    // Grade
-    if (localAtual == Grade && obj == Corredor) {
-      strncpy(aux, "\t Muitos guardas patrulhando a área.\n\n", MAXBUFF);
+    }else if (localAtual == Grade && obj == Corredor) {
+      strncpy(aux, "\t Poucos guardas patrulhando a área.\n\n", MAXBUFF);
       return aux;
-    }
-
-    // Privada
-    if (localAtual == Privada && obj == PrivadaObj) {
+    }else if (localAtual == Grade && obj == Porta) {
+      if (chave == 1) {
+        strncpy(aux, "FIM\t Você escapou. \t~\n\n", MAXBUFF);
+        return aux;
+      } else {
+        strncpy(aux, "\t Não da para fazer nada sem a chave.\n\n", MAXBUFF);
+        return aux;
+      }
+    }else if (localAtual == Privada && obj == PrivadaObj) {
       strncpy(aux, "\t Meu companheiro está preparando saquê.\n\n", MAXBUFF);
       return aux;
-    }
-
-    // Pia
-    if (localAtual == Pia && obj == Espelho) {
+    }else if (localAtual == Pia && obj == Espelho) {
       strncpy(aux, "\t Como você é feio, o tempo e a balança não ajudaram.\n\n", MAXBUFF);
       return aux;
-    }
-    if (localAtual == Pia && obj == PiaObj) {
+    }else if (localAtual == Pia && obj == PiaObj) {
       strncpy(aux, "\t Pia muito suja, enferrujada e vermes saindo pelo cano.\n\n", MAXBUFF);
+      return aux;
+    } else {
+      strncpy(aux, "\t Nada há fazer.\n\n", MAXBUFF);
       return aux;
     }
 }

@@ -140,7 +140,13 @@ int      socketfd;
                 exit(0);
             } else {
                 // Exibe as infos do jogo
-                printf("%s", buffer);
+                if (buffer[0] == 'F' && buffer[1] == 'I' && buffer[2] == 'M') {
+                     printf("%s", buffer);
+                     tela++;
+                     exit(0);
+                } else {
+                    printf("%s", buffer);
+                }
             }
         }
     } while (strcmp(buffer, FIM) != 0);
