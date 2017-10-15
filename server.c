@@ -37,6 +37,12 @@ typedef enum {
   Pia
 } Local;
 
+typedef enum {
+  Parede
+} Objetos;
+
+char * Examinar(Objetos obj);
+
 char *DescricaoLocal[NUMLOCAIS] = {
   "na cama da beliche.",
   "na cama de cima da beliche.",
@@ -189,10 +195,15 @@ int socketfd;
                         aux = Olhar();
                         strcpy(buffer, aux);
                         n = write(newsocketfd, buffer, strlen(buffer));
+                    } else if (tolower(strcmp(buffer, "examinar parede"))) {
+                        bzero(buffer, MAXBUFF);
+                        aux = Examinar(Parede);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
                     }
                 }
             }
-            printf("Jogo\n");
+            //printf("Jogo\n");
             sleep(1);
         }
     } while (gameOver != 1);
@@ -250,7 +261,7 @@ char * TutorialHelp() {
   \t você pode usar o comando 'olhar' para saber \n \
   \t o que está vendo, para olhar algo de perto \n \
   \t digite 'examinar' e o 'objeto', por exemplo \n \
-  \t examinar pia', após examinar algo você pode, \n \
+  \t 'examinar pia', após examinar algo você pode, \n \
   \t escolher se executa ou não uma ação com 'sim' \n \
   \t ou 'nao',você pode se mover pela cela com 'ir' \n \
   \t ex. 'ir grade', e se finalmente encontrar a chave \n \
@@ -260,7 +271,8 @@ char * TutorialHelp() {
 
 char * Sair() {
     char * aux = malloc(MAXBUFF);
-    strncpy(aux, "1", MAXBUFF);
+    strncpy(aux, "1", MAXBUFF);  
+    return aux;
     return aux;
 }
 
@@ -300,7 +312,16 @@ char * Olhar() {
         return aux;
     }
 }
+
+char * Examinar(Objetos obj) {
+    char * aux = malloc(MAXBUFF);
+
+    if (localAtual == Cama1 && obj == Parede) {
+      strncpy(aux, "Examinar Parede funcionou", MAXBUFF);
+      return aux;
+    }
 }
+
 /*
 void * Introducao() {
   printf("              Get Out Adventure Game\n");
