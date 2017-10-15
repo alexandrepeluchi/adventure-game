@@ -4,8 +4,16 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define MAXBUFF 1024
+# define   FIM    "fim da transmissao"
+
+int gameOver;
+
+void Introducao();
+char * Teste();
 
 void error(char *msg);
 int server(int);
@@ -54,16 +62,11 @@ int main(int argc, char *argv[])
     exit(0);
 }
 
-void error(char *msg)
-{
-    perror(msg);
-    exit(1);
-}
-
 server(socketfd)
 int socketfd;
 {
-    char buffer[MAXBUFF];
+    char buffer[MAXBUFF], nome[30];
+
     int newsocketfd, n, clilen;
     struct sockaddr_in cli_addr;
 
@@ -77,18 +80,68 @@ int socketfd;
     if (newsocketfd < 0)
       error("Funcao server: erro no accept");
 
-    bzero(buffer,MAXBUFF);
-    n = read(newsocketfd,buffer,MAXBUFF);
+    bzero(nome, MAXBUFF);
+    n = read(newsocketfd, nome, MAXBUFF);
 
     if (n < 0)
       error("Funcao server: erro de ler do socket");
 
-    printf("O jogador %s se conectou!\n",buffer);
+    printf("\nO jogador %s se conectou!\n\n\n", nome);
 
+    // Introducao();
+
+    bzero(buffer, MAXBUFF);
+    char *aux = Teste();
+    strcpy(buffer, aux);
+    n = write(newsocketfd, buffer, strlen(buffer));
+
+    if (n < 0)
+      error("Funcao server: erro de ler do socket");
+    /*
+    if (n > 0) {
+      if (write(newsocketfd, nome, n) != n) {
+          printf("Funcao server: erro no envio dos dados do arq. pelo socket");
+          close(socketfd);
+          close(newsocketfd);
+          exit(0);
+      }
+    }
+    */
+
+    sleep(1);
     //n = write(newsocketfd,"I got your message",18);
+
+    //Envia aviso de fim de transmissao
+n = sizeof(FIM);
+if (write(newsocketfd, FIM, n) != n) {
+    printf("Funcao server: erro no envio do fim de transmissao pelo socket");
+    close(socketfd);
+    close(newsocketfd);
+    exit(0);
+}
 
     if (n < 0)
       error("Funcao server: erro ao escrever no socket");
 
     return 0;
+}
+
+void error(char *msg)
+{
+    perror(msg);
+    exit(1);
+}
+
+void Introducao() {
+  printf("              Get Out Adventure Game\n");
+  printf("              por Alexandre Peluchi\n\n");
+  printf("A Terra de repente inexplicavelmente mudou sua órbita elíptica\n");
+  printf("e assim, começou a seguir um caminho que, gradualmente, \n");
+  printf("de pouco a pouco, dia a dia, se movia para longe do sol.\n\n");
+}
+
+char * Teste() {
+    char * aux = malloc(MAXBUFF);
+    strncpy(aux, "É bem possível", MAXBUFF);
+    return aux;
 }
