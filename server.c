@@ -15,6 +15,7 @@ int tela = 0;
 
 char * Introducao();
 char * Tutorial();
+char * Sair();
 
 char * Teste();
 
@@ -122,6 +123,11 @@ int socketfd;
                       n = write(newsocketfd, buffer, strlen(buffer));
                   break;
 
+                  case '3':
+                      gameOver = 1;
+                      tela++;
+                  break;
+
                   default:
                       printf("Comando errado");
                   break;
@@ -135,7 +141,7 @@ int socketfd;
     if (gameOver != 0) {
       n = sizeof(FIM);
       if (write(newsocketfd, FIM, n) != n) {
-          printf("Funcao server: erro no envio do fim de transmissao pelo socket");
+          error("Funcao server: erro no envio do fim de transmissao pelo socket");
           close(socketfd);
           close(newsocketfd);
           exit(0);
