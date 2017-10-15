@@ -170,6 +170,22 @@ int socketfd;
 
         // Aqui executa o jogo
         if (tela == 3) {
+            bzero(buffer, MAXBUFF);
+            while (tela == 3) {
+                n = read(newsocketfd, buffer, MAXBUFF);
+                if (n > 0) {
+                    if (tolower(buffer[0] == 'a')) {
+                        bzero(buffer, MAXBUFF);
+                        aux = TutorialHelp();
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    } else if (tolower(buffer[0] == 's')) {
+                        printf("Sair, finalizando transmissao\n");
+                        gameOver = 1;
+                        tela++;
+                    }
+                }
+            }
             printf("Jogo\n");
             sleep(1);
         }
@@ -221,7 +237,7 @@ char * Introducao() {
 
 char * TutorialHelp() {
   // Sem \n no printf não exibe msg no servidor
-  printf("Tutorial Enviado\n");
+  printf("Tutorial / Help Enviado\n");
   char * aux = malloc(MAXBUFF);
   strncpy(aux, "2.\n\n\t \t Comandos validos:\n\n \
   \t Qualquer duvida do que fazer digite 'ajuda',\n \
@@ -232,7 +248,7 @@ char * TutorialHelp() {
   \t escolher se executa ou não uma ação com 'sim' \n \
   \t ou 'nao',você pode se mover pela cela com 'ir' \n \
   \t ex. 'ir grade', e se finalmente encontrar a chave \n \
-  \t 'pegar chave'!\n\n", MAXBUFF);
+  \t 'pegar chave', para sair do jogo 'sair'!\n\n", MAXBUFF);
   return aux;
 }
 
