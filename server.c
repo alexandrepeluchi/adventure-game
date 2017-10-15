@@ -162,6 +162,7 @@ void error(char *msg)
 }
 
 char * Introducao() {
+  // Sem \n no printf não exibe msg no servidor
   printf("Introdução Enviada\n");
   char * aux = malloc(MAXBUFF);
   strncpy(aux, "\t \t Encontre a Chave\n\n \
@@ -175,6 +176,7 @@ char * Introducao() {
 }
 
 char * Tutorial() {
+  // Sem \n no printf não exibe msg no servidor
   printf("Tutorial Enviado\n");
   char * aux = malloc(MAXBUFF);
   strncpy(aux, "Teste", MAXBUFF);
