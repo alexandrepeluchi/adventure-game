@@ -37,6 +37,8 @@ typedef enum {
   Pia
 } Local;
 
+char * Mover(Local loc);
+
 typedef enum {
   Parede
 } Objetos;
@@ -195,9 +197,20 @@ int socketfd;
                         aux = Olhar();
                         strcpy(buffer, aux);
                         n = write(newsocketfd, buffer, strlen(buffer));
-                    } else if (tolower(strcmp(buffer, "examinar parede"))) {
+                    }
+
+                    // Examinar
+                    if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'p')) && (tolower(buffer[10] == 'a'))) {
                         bzero(buffer, MAXBUFF);
                         aux = Examinar(Parede);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    }
+
+                    // Mover
+                    if ((tolower(buffer[0] == 'm')) && (tolower(buffer[6] == 'p')) && (tolower(buffer[7] == 'i'))) {
+                        bzero(buffer, MAXBUFF);
+                        aux = Mover(Pia);
                         strcpy(buffer, aux);
                         n = write(newsocketfd, buffer, strlen(buffer));
                     }
@@ -271,7 +284,7 @@ char * TutorialHelp() {
 
 char * Sair() {
     char * aux = malloc(MAXBUFF);
-    strncpy(aux, "1", MAXBUFF);  
+    strncpy(aux, "1", MAXBUFF);
     return aux;
     return aux;
 }
@@ -317,7 +330,18 @@ char * Examinar(Objetos obj) {
     char * aux = malloc(MAXBUFF);
 
     if (localAtual == Cama1 && obj == Parede) {
-      strncpy(aux, "Examinar Parede funcionou", MAXBUFF);
+      strncpy(aux, "Examinar Parede funcionou\n\n", MAXBUFF);
+      return aux;
+    }
+}
+
+char * Mover(Local loc) {
+  char * aux = malloc(MAXBUFF);
+  localAtual = loc;
+
+
+    if (localAtual == Pia) {
+      strncpy(aux, "Moveu para pia\n\n", MAXBUFF);
       return aux;
     }
 }
