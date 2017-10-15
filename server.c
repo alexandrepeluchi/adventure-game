@@ -7,6 +7,10 @@
 
 #define MAXBUFF 1024
 
+int gameOver;
+
+void Introducao();
+
 void error(char *msg);
 int server(int);
 
@@ -54,16 +58,10 @@ int main(int argc, char *argv[])
     exit(0);
 }
 
-void error(char *msg)
-{
-    perror(msg);
-    exit(1);
-}
-
 server(socketfd)
 int socketfd;
 {
-    char buffer[MAXBUFF];
+    char buffer[MAXBUFF], nome[30];
     int newsocketfd, n, clilen;
     struct sockaddr_in cli_addr;
 
@@ -77,18 +75,33 @@ int socketfd;
     if (newsocketfd < 0)
       error("Funcao server: erro no accept");
 
-    bzero(buffer,MAXBUFF);
-    n = read(newsocketfd,buffer,MAXBUFF);
+    bzero(nome, MAXBUFF);
+    n = read(newsocketfd, nome, MAXBUFF);
 
     if (n < 0)
       error("Funcao server: erro de ler do socket");
 
-    printf("O jogador %s se conectou!\n",buffer);
+    printf("\nO jogador %s se conectou!\n\n\n", nome);
 
+    Introducao();
     //n = write(newsocketfd,"I got your message",18);
 
     if (n < 0)
       error("Funcao server: erro ao escrever no socket");
 
     return 0;
+}
+
+void error(char *msg)
+{
+    perror(msg);
+    exit(1);
+}
+
+void Introducao() {
+  printf("              Get Out Adventure Game\n");
+  printf("              por Alexandre Peluchi\n\n");
+  printf("A Terra de repente inexplicavelmente mudou sua órbita elíptica\n");
+  printf("e assim, começou a seguir um caminho que, gradualmente, \n");
+  printf("de pouco a pouco, dia a dia, se movia para longe do sol.\n\n");
 }
