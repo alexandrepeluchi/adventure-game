@@ -119,8 +119,16 @@ int      socketfd;
                 exit(0);
             } else {
                 // Exibe as infos do tutorial ou inicia o game e muda tela
-                printf("%s", buffer);
+                if (buffer[0] == '1') {
+                     printf("%s", buffer);
+                     tela++;
+                } else {
+                    printf("%s", buffer);
+                }
             }
+        } else if (tela == 3) {
+            printf("Client: jogo\n");
+            sleep(1);
         }
     } while (strcmp(buffer, FIM) != 0);
 }

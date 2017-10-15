@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 #define MAXBUFF 1024
+#define NUMLOCAIS 6
 # define   FIM    "fim da transmissao"
 
 int gameOver = 0;
@@ -17,10 +18,37 @@ char * Introducao();
 char * TutorialHelp();
 char * Sair();
 
+char * Iniciar();
+
+void Initialize();
+
 char * Teste();
 
 void error(char *msg);
 int server(int);
+
+typedef enum {
+  Cama1,
+  Cama2,
+  CamaBaixo,
+  Grade,
+  Privada,
+  Pia
+} Local;
+
+char *DescricaoLocal[NUMLOCAIS] = {
+  "na cama da beliche.",
+  "na cama de cima da beliche.",
+  "debaixo da cama.",
+  "na grade olhando pra fora.",
+  "de frente para a privada.",
+  "de frente para a pia."
+};
+
+int turnos;
+int localAtual;
+Local localChave = 2;
+int chave = 0;
 
 int main(int argc, char *argv[])
 {
@@ -85,68 +113,77 @@ int socketfd;
       error("Funcao server: erro no accept");
 
     do {
-    if (tela == 0) {
-        bzero(nome, MAXBUFF);
-        n = read(newsocketfd, nome, MAXBUFF);
+        if (tela == 0) {
+            bzero(nome, MAXBUFF);
+            n = read(newsocketfd, nome, MAXBUFF);
 
-        if (n < 0)
-          error("Funcao server: erro de ler do socket");
+            if (n < 0)
+              error("Funcao server: erro de ler do socket");
 
-        printf("\nO jogador %s se conectou!\n\n\n", nome);
-        tela++;
-    }
+            printf("\nO jogador %s se conectou!\n\n\n", nome);
+            tela++;
+        }
 
+        if (tela == 1) {
+            bzero(buffer, MAXBUFF);
+            aux = Introducao();
+            strcpy(buffer, aux);
+            tela++;
+            n = write(newsocketfd, buffer, strlen(buffer));
+        }
 
-    if (tela == 1) {
-        bzero(buffer, MAXBUFF);
-        aux = Introducao();
-        strcpy(buffer, aux);
-        tela++;
-        n = write(newsocketfd, buffer, strlen(buffer));
-    }
+        if (tela == 2) {
+            bzero(buffer, MAXBUFF);
+            while (tela == 2) {
+                n = read(newsocketfd, buffer, MAXBUFF);
+                //printf("Opcao do Menu retornado pelo cliente: %s", buffer);
+                if(n > 0) {
+                    switch (buffer[0]) {
+                      case '1':
+                          bzero(buffer, MAXBUFF);
+                          aux = Iniciar();
+                          strcpy(buffer, aux);
+                          tela++;
+                          n = write(newsocketfd, buffer, strlen(buffer));
+                      break;
 
-    if (tela == 2) {
-        bzero(buffer, MAXBUFF);
-        while (tela == 2) {
-            n = read(newsocketfd, buffer, MAXBUFF);
-            //printf("Opcao do Menu retornado pelo cliente: %s", buffer);
-            if(n > 0) {
-                switch (buffer[0]) {
-                  case '1':
-                      printf("Iniciar Jogo");
-                  break;
+                      case '2':
+                          bzero(buffer, MAXBUFF);
+                          aux = TutorialHelp();
+                          strcpy(buffer, aux);
+                          n = write(newsocketfd, buffer, strlen(buffer));
+                      break;
 
-                  case '2':
-                      bzero(buffer, MAXBUFF);
-                      aux = TutorialHelp();
-                      strcpy(buffer, aux);
-                      n = write(newsocketfd, buffer, strlen(buffer));
-                  break;
+                      case '3':
+                          printf("Sair, finalizando transmissao\n");
+                          gameOver = 1;
+                          tela++;
+                      break;
 
-                  case '3':
-                      printf("Sair, finalizando transmissao\n");
-                      gameOver = 1;
-                      tela++;
-                  break;
-
-                  default:
-                      printf("Comando errado");
-                  break;
+                      default:
+                          printf("Comando errado");
+                      break;
+                    }
                 }
             }
         }
-    }
-  } while (gameOver != 1);
+
+        // Aqui executa o jogo
+        if (tela == 3) {
+            printf("Jogo\n");
+            sleep(1);
+        }
+    } while (gameOver != 1);
 
     //Envia aviso de fim de transmissao
     if (gameOver != 0) {
-      n = sizeof(FIM);
-      if (write(newsocketfd, FIM, n) != n) {
-          error("Funcao server: erro no envio do fim de transmissao pelo socket");
-          close(socketfd);
-          close(newsocketfd);
-          exit(0);
-      }
+        n = sizeof(FIM);
+        if (write(newsocketfd, FIM, n) != n) {
+            error("Funcao server: erro no envio do fim de transmissao pelo socket");
+            close(socketfd);
+            close(newsocketfd);
+            exit(0);
+        }
     }
 
     if (n < 0)
@@ -186,13 +223,16 @@ char * TutorialHelp() {
   // Sem \n no printf não exibe msg no servidor
   printf("Tutorial Enviado\n");
   char * aux = malloc(MAXBUFF);
-  strncpy(aux, "\n\n\t \t Comandos validos:\n\n \
+  strncpy(aux, "2.\n\n\t \t Comandos validos:\n\n \
   \t Qualquer duvida do que fazer digite 'ajuda',\n \
-  \t você pode usar o comando 'olhar' para saber o que está vendo,\n \
-  \t para olhar algo de perto digite 'examinar' e o 'objeto',\n\n \
-  \t por exemplo 'examinar pia', após examinar algo você\n \
-  \t pode, escolher se executa ou não uma ação com 'sim' ou 'nao',\n \
-  \t e se finalmente encontrar a chave 'pegar chave'!\n\n", MAXBUFF);
+  \t você pode usar o comando 'olhar' para saber \n \
+  \t o que está vendo, para olhar algo de perto \n \
+  \t digite 'examinar' e o 'objeto', por exemplo \n \
+  \t examinar pia', após examinar algo você pode, \n \
+  \t escolher se executa ou não uma ação com 'sim' \n \
+  \t ou 'nao',você pode se mover pela cela com 'ir' \n \
+  \t ex. 'ir grade', e se finalmente encontrar a chave \n \
+  \t 'pegar chave'!\n\n", MAXBUFF);
   return aux;
 }
 
@@ -206,6 +246,23 @@ char * Teste() {
     char * aux = malloc(MAXBUFF);
     strncpy(aux, "É bem possível", MAXBUFF);
     return aux;
+}
+
+void Initialize() {
+  localAtual = Cama1;
+}
+
+char * Iniciar() {
+  // Sem \n no printf não exibe msg no servidor
+  printf("Iniciar jogo Enviado\n");
+  char * aux = malloc(MAXBUFF);
+  strncpy(aux, "1.\n\n\t \t \t Jogo Iniciado\n\n \
+  \t Após a visita de um camarada, você soube que mandaram\n \
+  \t esconder todas as chaves do presídio na sua cela,\n \
+  \t mas como os créditos do celular do camarada acabaram,\n \
+  \t o telefonema com o líder político foi interrompida, \n \
+  \t cabe a você encontrar as chaves e escapar da prisão.\n\n", MAXBUFF);
+  return aux;
 }
 
 /*
