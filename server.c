@@ -14,7 +14,7 @@ int gameOver = 0;
 int tela = 0;
 
 char * Introducao();
-char * Tutorial();
+char * TutorialHelp();
 char * Sair();
 
 char * Teste();
@@ -118,7 +118,7 @@ int socketfd;
 
                   case '2':
                       bzero(buffer, MAXBUFF);
-                      aux = Tutorial();
+                      aux = TutorialHelp();
                       strcpy(buffer, aux);
                       n = write(newsocketfd, buffer, strlen(buffer));
                   break;
@@ -182,7 +182,7 @@ char * Introducao() {
   return aux;
 }
 
-char * Tutorial() {
+char * TutorialHelp() {
   // Sem \n no printf não exibe msg no servidor
   printf("Tutorial Enviado\n");
   char * aux = malloc(MAXBUFF);
