@@ -208,7 +208,27 @@ int socketfd;
                     }
 
                     // Mover
-                    if ((tolower(buffer[0] == 'm')) && (tolower(buffer[6] == 'p')) && (tolower(buffer[7] == 'i'))) {
+                    if ((tolower(buffer[0] == 'm')) && (tolower(buffer[6] == 'c')) && (tolower(buffer[7] == 'a'))) {
+                        bzero(buffer, MAXBUFF);
+                        aux = Mover(Cama1);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    } else if ((tolower(buffer[0] == 'm')) && (tolower(buffer[6] == 'e')) && (tolower(buffer[7] == 'm'))) {
+                        bzero(buffer, MAXBUFF);
+                        aux = Mover(CamaBaixo);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    } else if ((tolower(buffer[0] == 'm')) && (tolower(buffer[6] == 'g')) && (tolower(buffer[7] == 'r'))) {
+                        bzero(buffer, MAXBUFF);
+                        aux = Mover(Grade);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    } else if ((tolower(buffer[0] == 'm')) && (tolower(buffer[6] == 'p')) && (tolower(buffer[7] == 'r'))) {
+                        bzero(buffer, MAXBUFF);
+                        aux = Mover(Privada);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    } else if ((tolower(buffer[0] == 'm')) && (tolower(buffer[6] == 'p')) && (tolower(buffer[7] == 'i'))) {
                         bzero(buffer, MAXBUFF);
                         aux = Mover(Pia);
                         strcpy(buffer, aux);
@@ -336,14 +356,53 @@ char * Examinar(Objetos obj) {
 }
 
 char * Mover(Local loc) {
-  char * aux = malloc(MAXBUFF);
-  localAtual = loc;
+    char * aux = malloc(MAXBUFF);
 
+    if(localAtual != loc) {
+        localAtual = loc;
 
+        switch (loc) {
+            case Cama1:
+                printf("Moveu Cama1\n");
+                strncpy(aux, "\tVocê está na sua cama.\n\n", MAXBUFF);
+                return aux;
+            break;
+
+            case CamaBaixo:
+                printf("Moveu CamaBaixo\n");
+                strncpy(aux, "\tVocê está na embaixo da cama.\n\n", MAXBUFF);
+                return aux;
+            break;
+
+            case Grade:
+                printf("Moveu Grade\n");
+                strncpy(aux, "\tVocê está de frente para a grade.\n\n", MAXBUFF);
+                return aux;
+            break;
+
+            case Privada:
+                printf("Moveu Privada\n");
+                strncpy(aux, "\tVocê está de frente para a privada.\n\n", MAXBUFF);
+                return aux;
+            break;
+
+            case Pia:
+                printf("Moveu Pia\n");
+                strncpy(aux, "\tVocê está de frente para a pia.\n\n", MAXBUFF);
+                return aux;
+            break;
+          }
+      } else {
+            printf("Não se moveu\n");
+            strncpy(aux, "\tVocê já está aqui.\n\n", MAXBUFF);
+            return aux;
+      }
+    /*
     if (localAtual == Pia) {
       strncpy(aux, "Moveu para pia\n\n", MAXBUFF);
       return aux;
     }
+    */
 }
 
 /*
