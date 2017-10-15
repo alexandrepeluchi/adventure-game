@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define MAXBUFF 1024
 # define   FIM    "fim da transmissao"
@@ -12,6 +13,7 @@
 int gameOver;
 
 void Introducao();
+char * Teste();
 
 void error(char *msg);
 int server(int);
@@ -64,7 +66,6 @@ server(socketfd)
 int socketfd;
 {
     char buffer[MAXBUFF], nome[30];
-    char aux[MAXBUFF];
 
     int newsocketfd, n, clilen;
     struct sockaddr_in cli_addr;
@@ -90,9 +91,9 @@ int socketfd;
     // Introducao();
 
     bzero(buffer, MAXBUFF);
-    strcpy(aux, "Shit Test\n\n");
+    char *aux = Teste();
     strcpy(buffer, aux);
-    n = write(newsocketfd, buffer, strlen(aux));
+    n = write(newsocketfd, buffer, strlen(buffer));
 
     if (n < 0)
       error("Funcao server: erro de ler do socket");
@@ -137,4 +138,10 @@ void Introducao() {
   printf("A Terra de repente inexplicavelmente mudou sua órbita elíptica\n");
   printf("e assim, começou a seguir um caminho que, gradualmente, \n");
   printf("de pouco a pouco, dia a dia, se movia para longe do sol.\n\n");
+}
+
+char * Teste() {
+    char * aux = malloc(MAXBUFF);
+    strncpy(aux, "É bem possível", MAXBUFF);
+    return aux;
 }
