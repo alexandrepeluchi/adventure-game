@@ -124,6 +124,7 @@ int socketfd;
                   break;
 
                   case '3':
+                      printf("Sair, finalizando transmissao\n");
                       gameOver = 1;
                       tela++;
                   break;
