@@ -227,7 +227,7 @@ int socketfd;
                         aux = Mover(Pia);
                         strcpy(buffer, aux);
                         n = write(newsocketfd, buffer, strlen(buffer));
-                    } else {
+                    } else { // Para não dar erro se digitar algo errado
                         bzero(buffer, MAXBUFF);
                         strncpy(aux, "\n\t Comando errado tente novamente\n\n", MAXBUFF);
                         strcpy(buffer, aux);
