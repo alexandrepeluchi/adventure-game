@@ -12,7 +12,8 @@
 
 int gameOver;
 
-void Introducao();
+char * Introducao();
+
 char * Teste();
 
 void error(char *msg);
@@ -66,7 +67,7 @@ server(socketfd)
 int socketfd;
 {
     char buffer[MAXBUFF], nome[30];
-
+    char *aux;
     int newsocketfd, n, clilen;
     struct sockaddr_in cli_addr;
 
@@ -89,9 +90,15 @@ int socketfd;
     printf("\nO jogador %s se conectou!\n\n\n", nome);
 
     // Introducao();
-
+    /*
     bzero(buffer, MAXBUFF);
     char *aux = Teste();
+    strcpy(buffer, aux);
+    n = write(newsocketfd, buffer, strlen(buffer));
+    */
+
+    bzero(buffer, MAXBUFF);
+    aux = Introducao();
     strcpy(buffer, aux);
     n = write(newsocketfd, buffer, strlen(buffer));
 
@@ -112,13 +119,13 @@ int socketfd;
     //n = write(newsocketfd,"I got your message",18);
 
     //Envia aviso de fim de transmissao
-n = sizeof(FIM);
-if (write(newsocketfd, FIM, n) != n) {
-    printf("Funcao server: erro no envio do fim de transmissao pelo socket");
-    close(socketfd);
-    close(newsocketfd);
-    exit(0);
-}
+    n = sizeof(FIM);
+    if (write(newsocketfd, FIM, n) != n) {
+        printf("Funcao server: erro no envio do fim de transmissao pelo socket");
+        close(socketfd);
+        close(newsocketfd);
+        exit(0);
+    }
 
     if (n < 0)
       error("Funcao server: erro ao escrever no socket");
@@ -132,12 +139,16 @@ void error(char *msg)
     exit(1);
 }
 
-void Introducao() {
-  printf("              Get Out Adventure Game\n");
-  printf("              por Alexandre Peluchi\n\n");
-  printf("A Terra de repente inexplicavelmente mudou sua órbita elíptica\n");
-  printf("e assim, começou a seguir um caminho que, gradualmente, \n");
-  printf("de pouco a pouco, dia a dia, se movia para longe do sol.\n\n");
+char * Introducao() {
+  char * aux = malloc(MAXBUFF);
+  strncpy(aux, "\t \t Encontre a Chave\n\n \
+  \t Você foi preso, mas um amigo político\n \
+  \t mandou esconder a chave na sua cela,\n \
+  \t tente encontrar!\n\n \
+  \t\t [1] Iniciar\n \
+  \t\t [2] Menu\n \
+  \t\t [3] Sair\n\n", MAXBUFF);
+  return aux;
 }
 
 char * Teste() {
@@ -145,3 +156,13 @@ char * Teste() {
     strncpy(aux, "É bem possível", MAXBUFF);
     return aux;
 }
+
+/*
+void * Introducao() {
+  printf("              Get Out Adventure Game\n");
+  printf("              por Alexandre Peluchi\n\n");
+  printf("A Terra de repente inexplicavelmente mudou sua órbita elíptica\n");
+  printf("e assim, começou a seguir um caminho que, gradualmente, \n");
+  printf("de pouco a pouco, dia a dia, se movia para longe do sol.\n\n");
+}
+*/

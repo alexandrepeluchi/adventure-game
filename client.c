@@ -75,6 +75,8 @@ int      socketfd;
     bzero(buffer, MAXBUFF);
     fgets(buffer, MAXBUFF,stdin);
 
+    puts("");
+
     n = write(socketfd, buffer, strlen(buffer));
     if (n < 0)
          error("Função cliente: erro ao escrever no socket");
@@ -85,7 +87,7 @@ int      socketfd;
 
       if ((n = read(socketfd, buffer, MAXBUFF)) < 0) {
           printf("Funcao client: erro no recebimento do conteudo do arquivo");
-    close(socketfd);
+          close(socketfd);
           exit(0);
       }
       //printf("Nome: %s\n", buffer);
@@ -94,11 +96,11 @@ int      socketfd;
                                             //Escreve os dados para a saida padrao
       if (write(1, buffer, n) != n)  {    //fd 1 = stdout
            printf("Funcao client:  erro na escrita para o video");
-      close(socketfd);
+           close(socketfd);
            exit(0);
       }
 
-    } while (strcmp(buffer,FIM)!=0);
+    } while (strcmp(buffer, FIM) != 0);
 }
 
 void error(char *msg)
