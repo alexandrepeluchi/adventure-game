@@ -170,7 +170,7 @@ int socketfd;
                       break;
 
                       default:
-                          printf("Comando errado");
+                          printf("Comando errado\n");
                       break;
                     }
                 }
@@ -197,18 +197,12 @@ int socketfd;
                         aux = Olhar();
                         strcpy(buffer, aux);
                         n = write(newsocketfd, buffer, strlen(buffer));
-                    }
-
-                    // Examinar
-                    if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'p')) && (tolower(buffer[10] == 'a'))) {
+                    } else if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'p')) && (tolower(buffer[10] == 'a'))) { // Examinar
                         bzero(buffer, MAXBUFF);
                         aux = Examinar(Parede);
                         strcpy(buffer, aux);
                         n = write(newsocketfd, buffer, strlen(buffer));
-                    }
-
-                    // Mover
-                    if ((tolower(buffer[0] == 'm')) && (tolower(buffer[6] == 'c')) && (tolower(buffer[7] == 'a'))) {
+                    }else if ((tolower(buffer[0] == 'm')) && (tolower(buffer[6] == 'c')) && (tolower(buffer[7] == 'a'))) { //Mover
                         bzero(buffer, MAXBUFF);
                         aux = Mover(Cama1);
                         strcpy(buffer, aux);
@@ -231,6 +225,11 @@ int socketfd;
                     } else if ((tolower(buffer[0] == 'm')) && (tolower(buffer[6] == 'p')) && (tolower(buffer[7] == 'i'))) {
                         bzero(buffer, MAXBUFF);
                         aux = Mover(Pia);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    } else {
+                        bzero(buffer, MAXBUFF);
+                        strncpy(aux, "\n\t Comando errado tente novamente\n\n", MAXBUFF);
                         strcpy(buffer, aux);
                         n = write(newsocketfd, buffer, strlen(buffer));
                     }
