@@ -40,7 +40,13 @@ typedef enum {
 char * Mover(Local loc);
 
 typedef enum {
-  Parede
+  Parede,
+  Cama,
+  Broche,
+  Corredor,
+  PrivadaObj,
+  Espelho,
+  PiaObj
 } Objetos;
 
 char * Examinar(Objetos obj);
@@ -197,9 +203,39 @@ int socketfd;
                         aux = Olhar();
                         strcpy(buffer, aux);
                         n = write(newsocketfd, buffer, strlen(buffer));
-                    } else if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'p')) && (tolower(buffer[10] == 'a'))) { // Examinar
+                    } else if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'p')) && (tolower(buffer[10] == 'a'))) { // Ex. Parede
                         bzero(buffer, MAXBUFF);
                         aux = Examinar(Parede);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    }else if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'c')) && (tolower(buffer[10] == 'a'))) { // Ex. Cama
+                        bzero(buffer, MAXBUFF);
+                        aux = Examinar(Cama);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    }else if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'b')) && (tolower(buffer[10] == 'r'))) { // Ex. Broche
+                        bzero(buffer, MAXBUFF);
+                        aux = Examinar(Broche);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    }else if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'c')) && (tolower(buffer[10] == 'o'))) { // Ex. Corredor
+                        bzero(buffer, MAXBUFF);
+                        aux = Examinar(Corredor);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    }else if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'p')) && (tolower(buffer[10] == 'r'))) { // Ex. Privada
+                        bzero(buffer, MAXBUFF);
+                        aux = Examinar(PrivadaObj);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    }else if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'e')) && (tolower(buffer[10] == 's'))) { // Ex. Espelho
+                        bzero(buffer, MAXBUFF);
+                        aux = Examinar(Espelho);
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
+                    }else if ((tolower(buffer[0] == 'e')) && (tolower(buffer[9] == 'p')) && (tolower(buffer[10] == 'i'))) { // Ex. Pia
+                        bzero(buffer, MAXBUFF);
+                        aux = Examinar(PiaObj);
                         strcpy(buffer, aux);
                         n = write(newsocketfd, buffer, strlen(buffer));
                     }else if ((tolower(buffer[0] == 'm')) && (tolower(buffer[6] == 'c')) && (tolower(buffer[7] == 'a'))) { //Mover
@@ -355,7 +391,7 @@ char * Olhar() {
     if (localAtual == Grade) {
         printf("Enviado o Local Atual - Grade, descricao do que vê e onde pode ir.\n");
         strncpy(aux, "\n\t Você está debruçado nas grades, \n \
-        dá para ver o pátio dali, todos estão nas celas. \n \n", MAXBUFF);
+        dá para ver o corredor, todos estão nas celas. \n \n", MAXBUFF);
         return aux;
     }
 
@@ -373,12 +409,53 @@ char * Olhar() {
         return aux;
     }
 }
-
+/*
+Parede
+Cama
+Broche
+Corredor
+Privada
+Espelho
+Pia
+*/
 char * Examinar(Objetos obj) {
     char * aux = malloc(MAXBUFF);
 
+    // Cama
     if (localAtual == Cama1 && obj == Parede) {
-      strncpy(aux, "Examinar Parede funcionou\n\n", MAXBUFF);
+      strncpy(aux, "\t Fotos de família e de famosos.\n\n", MAXBUFF);
+      return aux;
+    }
+    if (localAtual == Cama1 && obj == Cama) {
+      strncpy(aux, "\t A cama é tão dura quanto concreto.\n\n", MAXBUFF);
+      return aux;
+    }
+
+    // Embaixo da Cama
+    if (localAtual == CamaBaixo && obj == Broche) {
+      strncpy(aux, "\t Examinar Parede funcionou\n\n", MAXBUFF);
+      return aux;
+    }
+
+    // Grade
+    if (localAtual == Grade && obj == Corredor) {
+      strncpy(aux, "\t Muitos guardas patrulhando a área.\n\n", MAXBUFF);
+      return aux;
+    }
+
+    // Privada
+    if (localAtual == Privada && obj == PrivadaObj) {
+      strncpy(aux, "\t Meu companheiro está preparando saquê.\n\n", MAXBUFF);
+      return aux;
+    }
+
+    // Pia
+    if (localAtual == Pia && obj == Espelho) {
+      strncpy(aux, "\t Como você é feio, o tempo e a balança não ajudaram.\n\n", MAXBUFF);
+      return aux;
+    }
+    if (localAtual == Pia && obj == PiaObj) {
+      strncpy(aux, "\t Pia muito suja, enferrujada e vermes saindo pelo cano.\n\n", MAXBUFF);
       return aux;
     }
 }
