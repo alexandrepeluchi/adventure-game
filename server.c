@@ -19,6 +19,7 @@ char * TutorialHelp();
 char * Sair();
 
 char * Iniciar();
+char * Olhar();
 
 void Initialize();
 
@@ -183,6 +184,11 @@ int socketfd;
                         printf("Sair, finalizando transmissao\n");
                         gameOver = 1;
                         tela++;
+                    } else if (tolower(buffer[0] == 'o')) {
+                        bzero(buffer, MAXBUFF);
+                        aux = Olhar();
+                        strcpy(buffer, aux);
+                        n = write(newsocketfd, buffer, strlen(buffer));
                     }
                 }
             }
@@ -281,6 +287,20 @@ char * Iniciar() {
   return aux;
 }
 
+char * Olhar() {
+    if (localAtual == Cama1) {
+        printf("Enviado o Local Atual - Cama, descricao do que vê e onde pode ir.\n");
+        char * aux = malloc(MAXBUFF);
+        strncpy(aux, "\n\t Você está sentado na cama da beliche, \n \
+        olhando para uma parede cheia de coisas, \n \
+        a sua esquerda está a porta e grade da cela,\n \
+        a sua direita o 'banheiro', seu companheiro de cela \n \
+        está, na cama de cima da beliche fazendo barulhos \n \
+        estranhos.\n \n", MAXBUFF);
+        return aux;
+    }
+}
+}
 /*
 void * Introducao() {
   printf("              Get Out Adventure Game\n");
