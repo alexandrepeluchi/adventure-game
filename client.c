@@ -108,6 +108,7 @@ int      socketfd;
             }
             tela++;
         } else if (tela == 2) {
+            // MENU DO JOGO
             printf("\tOpção Menu: ");
             bzero(buffer, MAXBUFF);
             fgets(buffer, MAXBUFF, stdin);
@@ -119,6 +120,26 @@ int      socketfd;
                 exit(0);
             } else {
                 // Exibe as infos do tutorial ou inicia o game e muda tela
+                if (buffer[0] == '1') {
+                     printf("%s", buffer);
+                     tela++;
+                } else {
+                    printf("%s", buffer);
+                }
+            }
+        } else if (tela == 3) {
+            // JOGO INICIADO
+            printf("\t? ");
+            bzero(buffer, MAXBUFF);
+            fgets(buffer, MAXBUFF, stdin);
+            n = write(socketfd, buffer, strlen(buffer));
+
+            if ((n = read(socketfd, buffer, MAXBUFF)) < 0) {
+                printf("Funcao client: erro no recebimento de dados do server");
+                close(socketfd);
+                exit(0);
+            } else {
+                // Exibe as infos do jogo
                 printf("%s", buffer);
             }
         }
