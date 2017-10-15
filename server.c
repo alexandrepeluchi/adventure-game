@@ -179,8 +179,20 @@ char * Tutorial() {
   // Sem \n no printf não exibe msg no servidor
   printf("Tutorial Enviado\n");
   char * aux = malloc(MAXBUFF);
-  strncpy(aux, "Teste", MAXBUFF);
+  strncpy(aux, "\n\n\t \t Comandos validos:\n\n \
+  \t Qualquer duvida do que fazer digite 'ajuda',\n \
+  \t você pode usar o comando 'olhar' para saber o que está vendo,\n \
+  \t para olhar algo de perto digite 'examinar' e o 'objeto',\n\n \
+  \t por exemplo 'examinar pia', após examinar algo você\n \
+  \t pode, escolher se executa ou não uma ação com 'sim' ou 'nao',\n \
+  \t e se finalmente encontrar a chave 'pegar chave'!\n\n", MAXBUFF);
   return aux;
+}
+
+char * Sair() {
+    char * aux = malloc(MAXBUFF);
+    strncpy(aux, "1", MAXBUFF);
+    return aux;
 }
 
 char * Teste() {
