@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 
 #define MAXBUFF 1024
+# define   FIM    "fim da transmissao"
 
 int gameOver;
 
@@ -61,7 +62,7 @@ int main(int argc, char *argv[])
 server(socketfd)
 int socketfd;
 {
-    char buffer[MAXBUFF], nome[30];
+    char buffer[MAXBUFF], nome[30], *aux;
     int newsocketfd, n, clilen;
     struct sockaddr_in cli_addr;
 
@@ -83,8 +84,29 @@ int socketfd;
 
     printf("\nO jogador %s se conectou!\n\n\n", nome);
 
-    Introducao();
+    // Introducao();
+
+    if (n > 0) {
+      if (write(newsocketfd, nome, n) != n) {
+          printf("Funcao server: erro no envio dos dados do arq. pelo socket");
+          close(socketfd);
+          close(newsocketfd);
+          exit(0);
+      }
+    }
+
+
+    sleep(1);
     //n = write(newsocketfd,"I got your message",18);
+
+    //Envia aviso de fim de transmissao
+n = sizeof(FIM);
+if (write(newsocketfd, FIM, n) != n) {
+    printf("Funcao server: erro no envio do fim de transmissao pelo socket");
+    close(socketfd);
+    close(newsocketfd);
+    exit(0);
+}
 
     if (n < 0)
       error("Funcao server: erro ao escrever no socket");
