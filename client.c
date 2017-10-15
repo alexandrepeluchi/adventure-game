@@ -75,7 +75,7 @@ int      socketfd;
     bzero(buffer, MAXBUFF);
     fgets(buffer, MAXBUFF,stdin);
 
-    n = write(socketfd,buffer,strlen(buffer));
+    n = write(socketfd, buffer, strlen(buffer));
     if (n < 0)
          error("Função cliente: erro ao escrever no socket");
 

@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <string.h>
 
 #define MAXBUFF 1024
 # define   FIM    "fim da transmissao"
@@ -62,7 +63,9 @@ int main(int argc, char *argv[])
 server(socketfd)
 int socketfd;
 {
-    char buffer[MAXBUFF], nome[30], *aux;
+    char buffer[MAXBUFF], nome[30];
+    char aux[MAXBUFF];
+
     int newsocketfd, n, clilen;
     struct sockaddr_in cli_addr;
 
@@ -86,6 +89,14 @@ int socketfd;
 
     // Introducao();
 
+    bzero(buffer, MAXBUFF);
+    strcpy(aux, "Shit Test\n\n");
+    strcpy(buffer, aux);
+    n = write(newsocketfd, buffer, strlen(aux));
+
+    if (n < 0)
+      error("Funcao server: erro de ler do socket");
+    /*
     if (n > 0) {
       if (write(newsocketfd, nome, n) != n) {
           printf("Funcao server: erro no envio dos dados do arq. pelo socket");
@@ -94,7 +105,7 @@ int socketfd;
           exit(0);
       }
     }
-
+    */
 
     sleep(1);
     //n = write(newsocketfd,"I got your message",18);
