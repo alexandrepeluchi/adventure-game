@@ -294,11 +294,9 @@ char * TutorialHelp() {
   \t você pode usar o comando 'olhar' para saber \n \
   \t o que está vendo, para olhar algo de perto \n \
   \t digite 'examinar' e o 'objeto', por exemplo \n \
-  \t 'examinar pia', após examinar algo você pode, \n \
-  \t escolher se executa ou não uma ação com 'sim' \n \
-  \t ou 'nao',você pode se mover pela cela com 'ir' \n \
-  \t ex. 'ir grade', e se finalmente encontrar a chave \n \
-  \t 'pegar chave', para sair do jogo 'sair'!\n\n", MAXBUFF);
+  \t 'examinar pia', após examinar algo acontece, \n \
+  \t você pode se mover pela cela com 'mover' \n \
+  \t ex. 'mover pia', para sair do jogo 'sair'!\n\n", MAXBUFF);
   return aux;
 }
 
@@ -333,15 +331,46 @@ char * Iniciar() {
 }
 
 char * Olhar() {
+    char * aux = malloc(MAXBUFF);
+
     if (localAtual == Cama1) {
         printf("Enviado o Local Atual - Cama, descricao do que vê e onde pode ir.\n");
-        char * aux = malloc(MAXBUFF);
         strncpy(aux, "\n\t Você está sentado na cama da beliche, \n \
         olhando para uma parede cheia de coisas, \n \
-        a sua esquerda está a porta e grade da cela,\n \
-        a sua direita o 'banheiro', seu companheiro de cela \n \
-        está, na cama de cima da beliche fazendo barulhos \n \
-        estranhos.\n \n", MAXBUFF);
+        a sua esquerda está a grade da cela, a sua \n \
+        direita há uma pia e uma privada, seu \n \
+        companheiro de cela, está, na cama de cima da  \n \
+        beliche dormindo.\n \n", MAXBUFF);
+        return aux;
+    }
+
+    if (localAtual == CamaBaixo) {
+        printf("Enviado o Local Atual - Embaixo da Cama, descricao do que vê e onde pode ir.\n");
+        strncpy(aux, "\n\t Você está embaixo da beliche, é \n \
+        muito apertado você mal consegue se mover, \n \
+        a baixo está o 'banheiro' e acima as grades,\n \
+        você vê algo estranho no canto, um broche. \n \n", MAXBUFF);
+        return aux;
+    }
+
+    if (localAtual == Grade) {
+        printf("Enviado o Local Atual - Grade, descricao do que vê e onde pode ir.\n");
+        strncpy(aux, "\n\t Você está debruçado nas grades, \n \
+        dá para ver o pátio dali, todos estão nas celas. \n \n", MAXBUFF);
+        return aux;
+    }
+
+    if (localAtual == Privada) {
+        printf("Enviado o Local Atual - Privada, descricao do que vê e onde pode ir.\n");
+        strncpy(aux, "\n\t Você está em frente a privada, \n \
+        a um odor horrível saindo pela privada.\n \n", MAXBUFF);
+        return aux;
+    }
+
+    if (localAtual == Pia) {
+        printf("Enviado o Local Atual - Pia, descricao do que vê e onde pode ir.\n");
+        strncpy(aux, "\n\t Você está de frente para a pia, \n \
+        há um espelho a sua frente e algo saindo pelo cano.\n \n", MAXBUFF);
         return aux;
     }
 }
