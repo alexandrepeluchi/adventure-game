@@ -3,12 +3,16 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define MAXBUFF 1024
 #define FIM "fim da transmissao"
 
 int client(int);
 void error(char *msg);
+
+int tela = 0;
 
 int main(int argc, char *argv[])
 {
@@ -71,9 +75,13 @@ int      socketfd;
     char   buffer[MAXBUFF];
     int    n, flag;
 
-    printf("Por favor digite seu nome: ");
-    bzero(buffer, MAXBUFF);
-    fgets(buffer, MAXBUFF,stdin);
+    if (tela == 0) {
+        printf("Por favor digite seu nome: ");
+        bzero(buffer, MAXBUFF);
+        fgets(buffer, MAXBUFF,stdin);
+        tela++;
+        puts("");
+    }
 
     n = write(socketfd, buffer, strlen(buffer));
     if (n < 0)
@@ -82,23 +90,39 @@ int      socketfd;
     bzero(buffer, MAXBUFF);
 
     do {
+        if(tela == 1) {
+            if ((n = read(socketfd, buffer, MAXBUFF)) < 0) {
+                printf("Funcao client: erro no recebimento de dados do server");
+                close(socketfd);
+                exit(0);
+            }
+            //printf("Nome: %s\n", buffer);
 
-      if ((n = read(socketfd, buffer, MAXBUFF)) < 0) {
-          printf("Funcao client: erro no recebimento do conteudo do arquivo");
-    close(socketfd);
-          exit(0);
-      }
-      //printf("Nome: %s\n", buffer);
+            // Escreve o Menu
+            if (strcmp(buffer,FIM) != 0)            //Se nao e' fim de transmissao
+            //printf("Escreve intro");                                      //Escreve os dados para a saida padrao
+            if (write(1, buffer, n) != n)  {    //fd 1 = stdout
+                 printf("Funcao client:  erro na escrita para o video");
+                 close(socketfd);
+                 exit(0);
+            }
+            tela++;
+        } else if (tela == 2) {
+            printf("\tOpção Menu: ");
+            bzero(buffer, MAXBUFF);
+            fgets(buffer, MAXBUFF, stdin);
+            n = write(socketfd, buffer, strlen(buffer));
 
-      if (strcmp(buffer,FIM) != 0)            //Se nao e' fim de transmissao
-                                            //Escreve os dados para a saida padrao
-      if (write(1, buffer, n) != n)  {    //fd 1 = stdout
-           printf("Funcao client:  erro na escrita para o video");
-      close(socketfd);
-           exit(0);
-      }
-
-    } while (strcmp(buffer,FIM)!=0);
+            if ((n = read(socketfd, buffer, MAXBUFF)) < 0) {
+                printf("Funcao client: erro no recebimento de dados do server");
+                close(socketfd);
+                exit(0);
+            } else {
+                // Exibe as infos do tutorial ou inicia o game e muda tela
+                printf("%s", buffer);
+            }
+        }
+    } while (strcmp(buffer, FIM) != 0);
 }
 
 void error(char *msg)

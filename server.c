@@ -10,9 +10,13 @@
 #define MAXBUFF 1024
 # define   FIM    "fim da transmissao"
 
-int gameOver;
+int gameOver = 0;
+int tela = 0;
 
-void Introducao();
+char * Introducao();
+char * Tutorial();
+char * Sair();
+
 char * Teste();
 
 void error(char *msg);
@@ -66,8 +70,8 @@ server(socketfd)
 int socketfd;
 {
     char buffer[MAXBUFF], nome[30];
-
-    int newsocketfd, n, clilen;
+    char *aux;
+    int newsocketfd, n, clilen, menuN;
     struct sockaddr_in cli_addr;
 
     //Prepara para receber conexoes dos clientes
@@ -80,49 +84,80 @@ int socketfd;
     if (newsocketfd < 0)
       error("Funcao server: erro no accept");
 
-    bzero(nome, MAXBUFF);
-    n = read(newsocketfd, nome, MAXBUFF);
+    do {
+    if (tela == 0) {
+        bzero(nome, MAXBUFF);
+        n = read(newsocketfd, nome, MAXBUFF);
 
-    if (n < 0)
-      error("Funcao server: erro de ler do socket");
+        if (n < 0)
+          error("Funcao server: erro de ler do socket");
 
-    printf("\nO jogador %s se conectou!\n\n\n", nome);
+        printf("\nO jogador %s se conectou!\n\n\n", nome);
+        tela++;
+    }
 
-    // Introducao();
 
-    bzero(buffer, MAXBUFF);
-    char *aux = Teste();
-    strcpy(buffer, aux);
-    n = write(newsocketfd, buffer, strlen(buffer));
+    if (tela == 1) {
+        bzero(buffer, MAXBUFF);
+        aux = Introducao();
+        strcpy(buffer, aux);
+        tela++;
+        n = write(newsocketfd, buffer, strlen(buffer));
+    }
 
-    if (n < 0)
-      error("Funcao server: erro de ler do socket");
-    /*
-    if (n > 0) {
-      if (write(newsocketfd, nome, n) != n) {
-          printf("Funcao server: erro no envio dos dados do arq. pelo socket");
+    if (tela == 2) {
+        bzero(buffer, MAXBUFF);
+        while (tela == 2) {
+            n = read(newsocketfd, buffer, MAXBUFF);
+            //printf("Opcao do Menu retornado pelo cliente: %s", buffer);
+            if(n > 0) {
+                switch (buffer[0]) {
+                  case '1':
+                      printf("Iniciar Jogo");
+                  break;
+
+                  case '2':
+                      bzero(buffer, MAXBUFF);
+                      aux = Tutorial();
+                      strcpy(buffer, aux);
+                      n = write(newsocketfd, buffer, strlen(buffer));
+                  break;
+
+                  case '3':
+                      gameOver = 1;
+                      tela++;
+                  break;
+
+                  default:
+                      printf("Comando errado");
+                  break;
+                }
+            }
+        }
+    }
+  } while (gameOver != 1);
+
+    //Envia aviso de fim de transmissao
+    if (gameOver != 0) {
+      n = sizeof(FIM);
+      if (write(newsocketfd, FIM, n) != n) {
+          error("Funcao server: erro no envio do fim de transmissao pelo socket");
           close(socketfd);
           close(newsocketfd);
           exit(0);
       }
     }
-    */
-
-    sleep(1);
-    //n = write(newsocketfd,"I got your message",18);
-
-    //Envia aviso de fim de transmissao
-n = sizeof(FIM);
-if (write(newsocketfd, FIM, n) != n) {
-    printf("Funcao server: erro no envio do fim de transmissao pelo socket");
-    close(socketfd);
-    close(newsocketfd);
-    exit(0);
-}
 
     if (n < 0)
       error("Funcao server: erro ao escrever no socket");
 
+      // Introducao();
+      /*
+      bzero(buffer, MAXBUFF);
+      char *aux = Teste();
+      strcpy(buffer, aux);
+      n = write(newsocketfd, buffer, strlen(buffer));
+      */
     return 0;
 }
 
@@ -132,12 +167,38 @@ void error(char *msg)
     exit(1);
 }
 
-void Introducao() {
-  printf("              Get Out Adventure Game\n");
-  printf("              por Alexandre Peluchi\n\n");
-  printf("A Terra de repente inexplicavelmente mudou sua órbita elíptica\n");
-  printf("e assim, começou a seguir um caminho que, gradualmente, \n");
-  printf("de pouco a pouco, dia a dia, se movia para longe do sol.\n\n");
+char * Introducao() {
+  // Sem \n no printf não exibe msg no servidor
+  printf("Introdução Enviada\n");
+  char * aux = malloc(MAXBUFF);
+  strncpy(aux, "\t \t Encontre a Chave\n\n \
+  \t Você foi preso, mas um amigo político\n \
+  \t mandou esconder a chave na sua cela,\n \
+  \t tente encontrar!\n\n \
+  \t\t [1] Iniciar\n \
+  \t\t [2] Tutorial\n \
+  \t\t [3] Sair\n\n", MAXBUFF);
+  return aux;
+}
+
+char * Tutorial() {
+  // Sem \n no printf não exibe msg no servidor
+  printf("Tutorial Enviado\n");
+  char * aux = malloc(MAXBUFF);
+  strncpy(aux, "\n\n\t \t Comandos validos:\n\n \
+  \t Qualquer duvida do que fazer digite 'ajuda',\n \
+  \t você pode usar o comando 'olhar' para saber o que está vendo,\n \
+  \t para olhar algo de perto digite 'examinar' e o 'objeto',\n\n \
+  \t por exemplo 'examinar pia', após examinar algo você\n \
+  \t pode, escolher se executa ou não uma ação com 'sim' ou 'nao',\n \
+  \t e se finalmente encontrar a chave 'pegar chave'!\n\n", MAXBUFF);
+  return aux;
+}
+
+char * Sair() {
+    char * aux = malloc(MAXBUFF);
+    strncpy(aux, "1", MAXBUFF);
+    return aux;
 }
 
 char * Teste() {
@@ -145,3 +206,13 @@ char * Teste() {
     strncpy(aux, "É bem possível", MAXBUFF);
     return aux;
 }
+
+/*
+void * Introducao() {
+  printf("              Get Out Adventure Game\n");
+  printf("              por Alexandre Peluchi\n\n");
+  printf("A Terra de repente inexplicavelmente mudou sua órbita elíptica\n");
+  printf("e assim, começou a seguir um caminho que, gradualmente, \n");
+  printf("de pouco a pouco, dia a dia, se movia para longe do sol.\n\n");
+}
+*/
